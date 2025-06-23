@@ -6,6 +6,8 @@ struct FolderListView: View {
     @Query(sort: \Folder.name) private var folders: [Folder]
     @Query private var milestones: [Milestone]
     
+    @Environment(\.modelContext) private var modelContext
+    
     @State private var allFolders: [Folder] = []
     
     @State private var showEditMode = false
@@ -15,7 +17,7 @@ struct FolderListView: View {
         
         NavigationStack {
             List {
-                ForEach(allFolders) { folder in
+                ForEach(self.allFolders) { folder in
                     FolderView(folder: folder, isEditMode: self.showEditMode)
                         .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
                 }
@@ -71,13 +73,15 @@ struct FolderListView: View {
         }
     }
     
+    
+    
     // MARK: - 方法
     /**
      刷新文件夹列表
      */
     private func refresh() {
-        allFolders = []
-        allFolders.insert(contentsOf: folders, at: 0)
+        self.allFolders = []
+        self.allFolders.insert(contentsOf: folders, at: 0)
         
         // 添加全部里程碑文件夹
         let systemFolder = Folder(name: Constants.FOLDER_ALL_EN)
@@ -86,7 +90,7 @@ struct FolderListView: View {
         allFolders.insert(systemFolder, at: 0)
         
         // 添加最近删除文件夹
-        if milestones.first(where: { $0.deleted }) != nil {
+        if self.milestones.first(where: { $0.deleted }) != nil {
             let latestDeleteFolder = Folder(name: Constants.FOLDER_DELETED_EN)
             latestDeleteFolder.id = Constants.FOLDER_DELETED_UUID
             latestDeleteFolder.type = .deleted
