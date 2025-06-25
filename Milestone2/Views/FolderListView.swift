@@ -16,7 +16,6 @@ struct FolderListView: View {
     @State private var searchText = ""
     
     var body: some View {
-        
         NavigationStack {
             List {
                 ForEach(self.allFolders) { folder in
