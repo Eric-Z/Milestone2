@@ -9,9 +9,11 @@ struct FolderListView: View {
     @Environment(\.modelContext) private var modelContext
     
     @State private var allFolders: [Folder] = []
-    
+
     @State private var showEditMode = false
     @State private var showAddFolder = false
+
+    @State private var searchText = ""
     
     var body: some View {
         
@@ -48,9 +50,9 @@ struct FolderListView: View {
                         if (self.showEditMode) {
                             Image(systemName: "checkmark")
                                 .fontWeight(.medium)
-                                .foregroundStyle(.white)
+                                .foregroundStyle(.labelPrimary)
                                 .frame(width: 56, height: 44)
-                                .background(.textHighlight1)
+                                .background(.backgroundSecondary)
                                 .cornerRadius(22)
                             
                         } else {
@@ -65,15 +67,15 @@ struct FolderListView: View {
                 }
             }
         }
+        .searchable(text: $searchText, placement: .automatic, prompt: "search")
         .onAppear {
             refresh()
+            setupSearchBarAppearance()
         }
         .sheet(isPresented: $showAddFolder) {
             FolderAddView()
         }
     }
-    
-    
     
     // MARK: - 方法
     /**
@@ -96,6 +98,16 @@ struct FolderListView: View {
             latestDeleteFolder.type = .deleted
             allFolders.insert(latestDeleteFolder, at: allFolders.count)
         }
+    }
+    
+    /**
+     自定义取消按钮样式
+     */
+    private func setupSearchBarAppearance() {
+        
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes([
+            .foregroundColor: UIColor(named: "LabelPrimary")!,
+        ], for: .normal)
     }
 }
 
